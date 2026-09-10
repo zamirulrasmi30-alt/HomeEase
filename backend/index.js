@@ -73,10 +73,14 @@ app.use('/api/admin/analytics', adminAnalyticsRouter);
 app.use(notFound);
 app.use(errorHandler);
 
-app.listen(config.port, () => {
-  console.log(`[buildsupply] backend listening on http://localhost:${config.port}`);
-  console.log(`[buildsupply] db ready      : ${Boolean(config.supabase.url)}`);
-});
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(config.port, () => {
+    console.log(`[buildsupply] backend listening on http://localhost:${config.port}`);
+    console.log(`[buildsupply] db ready      : ${Boolean(config.supabase.url)}`);
+  });
+}
+
+module.exports = app;
 
 // Non-fatal startup migration: try to add customer_email to orders.
 ensureCustomerEmailColumn().catch((e) =>
