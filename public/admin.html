@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — HomeEase</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="grid-overlay"></div>
+  </div>
+
+  <!-- LOGIN SCREEN -->
+  <div id="loginScreen" class="erp-login-wrap hidden">
+    <div class="glass-card erp-login-card">
+      <div class="erp-login-logo"><i class="fas fa-hand-sparkles"></i></div>
+      <h1 class="erp-login-title">HomeEase <span class="gradient-text">Admin</span></h1>
+      <p class="erp-login-sub">Enterprise dashboard — manage services, labor, and bookings.</p>
+      <form id="adminLoginForm" class="erp-login-form">
+        <div class="form-group">
+          <label><i class="fas fa-user"></i> Username</label>
+          <input type="text" class="text-input" id="loginUser" placeholder="admin" required>
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-key"></i> Password</label>
+          <input type="password" class="text-input" id="loginPass" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full"><i class="fas fa-sign-in-alt"></i> Sign In</button>
+      </form>
+      <button type="button" class="btn btn-glass btn-full erp-back-btn" id="adminBackBtn"><i class="fas fa-arrow-left"></i> Back to Website</button>
+      <p class="erp-login-hint">Default: admin / admin123</p>
+    </div>
+  </div>
+
+  <!-- ERP LAYOUT -->
+  <div id="erpLayout" class="erp-layout hidden">
+    <aside class="erp-sidebar" id="erpSidebar">
+      <div class="erp-brand">
+        <div class="erp-brand-logo"><i class="fas fa-hand-sparkles"></i></div>
+        <div class="erp-brand-text">
+          <span class="erp-brand-name">HomeEase</span>
+          <span class="erp-brand-sub">Admin Console</span>
+        </div>
+      </div>
+      <nav class="erp-nav">
+        <button class="erp-nav-item" data-erp-tab="dashboard"><i class="fas fa-chart-pie"></i> <span>Dashboard</span></button>
+        <button class="erp-nav-item" data-erp-tab="services"><i class="fas fa-tools"></i> <span>Service Management</span></button>
+        <button class="erp-nav-item" data-erp-tab="workers"><i class="fas fa-users"></i> <span>Labor Directory</span></button>
+        <button class="erp-nav-item" data-erp-tab="bookings"><i class="fas fa-calendar-check"></i> <span>Bookings & Orders</span></button>
+      </nav>
+      <div class="erp-sidebar-foot">
+        <div class="erp-admin-chip">
+          <div class="erp-admin-avatar"><i class="fas fa-user-shield"></i></div>
+          <div>
+            <div class="erp-admin-name">Administrator</div>
+            <div class="erp-admin-role">Super Admin</div>
+          </div>
+        </div>
+        <button class="btn btn-glass btn-sm erp-logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        <button class="btn btn-glass btn-sm erp-logout-btn" id="backSiteBtn"><i class="fas fa-globe"></i> Back to Website</button>
+      </div>
+    </aside>
+
+    <div class="erp-main">
+      <div class="erp-topbar">
+        <button class="erp-hamburger" id="erpHamburger"><i class="fas fa-bars"></i></button>
+        <h2 class="erp-topbar-title" id="erpTopbarTitle">Dashboard Overview</h2>
+        <div class="erp-topbar-right">
+          <span class="erp-live-dot"></span> Live
+        </div>
+      </div>
+      <div class="erp-content">
+        <div id="tabDashboard" class="erp-tab"></div>
+        <div id="tabServices" class="erp-tab hidden"></div>
+        <div id="tabWorkers" class="erp-tab hidden"></div>
+        <div id="tabBookings" class="erp-tab hidden"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GENERIC MODAL (admin booking/worker forms) -->
+  <div class="modal" id="genericModal">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content glass-card modal-wide" id="genericModalContent">
+      <button class="modal-close" data-close="genericModal"><i class="fas fa-times"></i></button>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast">
+    <div class="toast-icon"><i class="fas fa-check-circle"></i></div>
+    <div class="toast-text" id="toastText">Done!</div>
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+</html>

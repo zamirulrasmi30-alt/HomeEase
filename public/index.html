@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HomeEase — Home Service Booking & Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="bg-orbs">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="grid-overlay"></div>
+  </div>
+
+  <!-- NAVIGATION -->
+  <header class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="#" class="brand" data-nav="home">
+        <div class="brand-logo"><i class="fas fa-hand-sparkles"></i></div>
+        <div class="brand-text">
+          <span class="brand-name">HomeEase</span>
+          <span class="brand-sub">Book · Manage · Relax</span>
+        </div>
+      </a>
+      <nav class="nav-links" id="navLinks">
+        <a href="#home" class="nav-link active" data-nav="home">Home</a>
+        <div class="nav-dropdown-wrap">
+          <a href="#services" class="nav-link" data-nav="services">Services <i class="fas fa-chevron-down nav-caret"></i></a>
+          <div class="nav-dropdown" id="navServicesDropdown"><!-- Categories injected via JS --></div>
+        </div>
+        <a href="#about" class="nav-link" data-nav="about">About</a>
+        <a href="#contact" class="nav-link" data-nav="contact">Contact</a>
+        <a href="/admin" class="nav-link admin-link" data-nav="admin"><i class="fas fa-user-shield"></i> Admin Dashboard <span class="badge-count admin-notification-badge hidden">0</span></a>
+      </nav>
+      <div class="nav-actions">
+        <button class="btn btn-primary btn-sm" id="bookNowBtn"><i class="fas fa-calendar-check"></i> Book Now</button>
+        <button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#home" data-nav="home">Home</a>
+    <a href="#services" data-nav="services">Services</a>
+    <div class="mobile-subnav" id="mobileCategoryNav"><!-- Categories injected via JS --></div>
+    <a href="#about" data-nav="about">About</a>
+    <a href="#contact" data-nav="contact">Contact</a>
+    <a href="/admin" data-nav="admin"><i class="fas fa-user-shield"></i> Admin Dashboard <span class="badge-count admin-notification-badge hidden">0</span></a>
+  </div>
+
+  <main>
+    <!-- HERO SECTION -->
+    <section id="home" class="hero section">
+      <div class="hero-content">
+        <span class="hero-badge"><i class="fas fa-star"></i> Trusted by 50,000+ Happy Homes</span>
+        <h1 class="hero-title">Every Home Service, <span class="gradient-text">One Click Away</span></h1>
+        <p class="hero-subtitle">From AC repairs to plumbing, our verified professionals bring quality service right to your doorstep. Book in seconds, relax in style.</p>
+        <div class="hero-cta">
+          <button class="btn btn-primary btn-lg" id="heroBookBtn"><i class="fas fa-rocket"></i> Get Started</button>
+          <button class="btn btn-glass btn-lg" id="heroExploreBtn"><i class="fas fa-compass"></i> Explore Services</button>
+        </div>
+        <div class="hero-stats">
+          <div class="stat">
+            <span class="stat-num" data-count="50000">0</span><span class="stat-plus">+</span>
+            <span class="stat-label">Services Done</span>
+          </div>
+          <div class="stat">
+            <span class="stat-num" data-count="1200">0</span><span class="stat-plus">+</span>
+            <span class="stat-label">Verified Pros</span>
+          </div>
+          <div class="stat">
+            <span class="stat-num" data-count="4.9" data-decimals="1">0</span><span class="stat-plus">★</span>
+            <span class="stat-label">Avg. Rating</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-visual" id="heroModel">
+        <!-- 3D CIRCULAR ORBIT CAROUSEL -->
+        <div class="orbit" id="orbitCarousel" aria-roledescription="carousel" aria-label="Featured home services">
+
+          <div class="orbit-stage" id="orbitStage">
+
+            <!-- Glowing orbital track rings -->
+            <div class="orbit-tracks" aria-hidden="true">
+              <svg viewBox="0 0 600 400" focusable="false">
+                <defs>
+                  <linearGradient id="orbitTrackStroke" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="rgba(0,210,255,0)"></stop>
+                    <stop offset="22%" stop-color="rgba(0,210,255,0.6)"></stop>
+                    <stop offset="78%" stop-color="rgba(0,210,255,0.6)"></stop>
+                    <stop offset="100%" stop-color="rgba(0,210,255,0)"></stop>
+                  </linearGradient>
+                  <marker id="orbitArrowL" viewBox="0 0 10 10" refX="7" refY="5"
+                          markerWidth="5" markerHeight="5" orient="auto">
+                    <path d="M 9 1 L 1 5 L 9 9 z" fill="rgba(0,210,255,0.85)"></path>
+                  </marker>
+                  <marker id="orbitArrowR" viewBox="0 0 10 10" refX="7" refY="5"
+                          markerWidth="5" markerHeight="5" orient="auto">
+                    <path d="M 9 1 L 1 5 L 9 9 z" fill="rgba(0,210,255,0.85)"></path>
+                  </marker>
+                </defs>
+                <ellipse class="orbit-track" cx="300" cy="200" rx="272" ry="146"
+                         fill="none" stroke="url(#orbitTrackStroke)" stroke-width="1.5"></ellipse>
+                <ellipse class="orbit-track orbit-track-faint" cx="300" cy="200" rx="206" ry="106"
+                         fill="none" stroke="url(#orbitTrackStroke)" stroke-width="1"></ellipse>
+              </svg>
+            </div>
+
+            <!-- Orbiting nodes are rendered from ORBIT_SERVICES in app.js -->
+            <div class="orbit-ring" id="orbitRing"></div>
+
+            <!-- Central active node -->
+            <div class="orbit-core" id="orbitCore">
+              <span class="orbit-core-ring"></span>
+              <span class="orbit-core-ring orbit-core-ring-2"></span>
+
+              <img class="orbit-core-img" id="orbitCoreImg"
+                   src="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&amp;w=900&amp;q=80"
+                   alt="Deep Home Cleaning">
+
+              <svg class="orbit-core-banner" viewBox="0 0 320 130" aria-hidden="true" focusable="false">
+                <defs>
+                  <path id="orbitBannerArc" d="M 30 104 A 150 150 0 0 1 290 104"></path>
+                </defs>
+                <text class="orbit-core-banner-text">
+                  <textPath href="#orbitBannerArc" startOffset="50%" text-anchor="middle">
+                    <tspan id="orbitCoreBanner">HOME CLEANING</tspan>
+                  </textPath>
+                </text>
+              </svg>
+
+              <div class="orbit-core-overlay">
+                <span class="orbit-core-tag"><i class="fas fa-broom" id="orbitCoreIcon"></i> <span id="orbitCoreTag">Home Cleaning</span></span>
+                <h3 class="orbit-core-title" id="orbitCoreTitle">Deep Home Cleaning</h3>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Navigation -->
+          <button type="button" class="orbit-arrow orbit-prev" id="orbitPrev" aria-label="Previous service"><i class="fas fa-chevron-left"></i></button>
+          <button type="button" class="orbit-arrow orbit-next" id="orbitNext" aria-label="Next service"><i class="fas fa-chevron-right"></i></button>
+          <div class="orbit-dots" id="orbitDots" role="tablist" aria-label="Choose service"></div>
+        </div>
+
+        <img id="hero-banner-img" src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=80" alt="Hero Service Visual" class="hero-banner-compat" aria-hidden="true">
+        <span class="hero-caption"><i class="fas fa-couch"></i> Comfort · Clean · Care</span>
+      </div>
+      </div>
+    </section>
+
+    <!-- SERVICES SECTION -->
+    <section id="services" class="section">
+      <div class="section-head">
+        <span class="section-tag"><i class="fas fa-tools"></i> Our Services</span>
+        <h2 class="section-title">Choose Your <span class="gradient-text">Service</span></h2>
+        <p class="section-desc">Professional, verified, and affordable home services at your fingertips.</p>
+      </div>
+      <div class="services-grid" id="servicesGrid">
+        <!-- Services loaded via JS -->
+      </div>
+    </section>
+
+    <!-- FIELD EXPERTS SECTION -->
+    <section id="fieldExperts" class="section">
+      <div class="section-head">
+        <span class="section-tag"><i class="fas fa-users"></i> Our Field Experts</span>
+        <h2 class="section-title">Meet Our <span class="gradient-text">Verified Pros</span></h2>
+        <p class="section-desc">Hand-picked, background-checked technicians ready to serve every category — book your favorite pro today.</p>
+      </div>
+      <div class="experts-groups" id="homeWorkersGrid">
+        <!-- Experts loaded via JS -->
+      </div>
+    </section>
+
+    <!-- CATEGORY PAGE (hidden by default) -->
+    <section id="categoryPage" class="section hidden">
+      <div class="category-header" id="categoryHeader">
+        <button class="btn btn-glass back-btn" id="backBtn"><i class="fas fa-arrow-left"></i> Back to Services</button>
+        <div class="category-hero">
+          <div class="category-info">
+            <span class="section-tag"><i class="fas fa-check-circle"></i> Available Now</span>
+            <h2 class="category-title" id="categoryTitle">AC Mechanic</h2>
+            <p class="category-desc" id="categoryDesc">Professional, verified, and affordable home services at your fingertips.</p>
+            <div class="category-meta">
+              <span class="price-tag" id="categoryPrice">$79</span>
+              <span class="status-badge"><i class="fas fa-circle status-dot"></i> Currently Available</span>
+              <button type="button" class="btn btn-primary btn-sm btn-book-service"
+                data-book-service
+                data-service-name="AC Mechanic"
+                data-price="199">
+                <i class="fas fa-calendar-check"></i> Book Now
+              </button>
+            </div>
+            <p class="visiting-fee-note" id="categoryVisitingNote"><i class="fas fa-clipboard-check"></i> Visiting &amp; Inspection Fee: ₹199. Final repair cost will be quoted on-site after inspection.</p>
+          </div>
+          <div class="category-model glass-card">
+            <div class="visual-frame">
+              <img id="categoryImage" class="category-image" alt="Service visual" loading="lazy">
+              <span class="visual-frame-badge"><i class="fas fa-image"></i> High-Res Visual</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="workers-head">
+        <h3 class="workers-title"><i class="fas fa-users"></i> Our Field Experts</h3>
+        <div class="workers-filters">
+          <input type="text" class="search-input" id="workerSearch" placeholder="Search by name...">
+          <select class="select-input" id="experienceFilter">
+            <option value="">All Experience</option>
+            <option value="high">5+ Years</option>
+            <option value="low">Under 5 Years</option>
+          </select>
+        </div>
+      </div>
+      <div class="workers-grid" id="workersGrid">
+        <!-- Workers loaded via JS -->
+      </div>
+    </section>
+
+    <!-- ABOUT SECTION -->
+    <section id="about" class="section">
+      <div class="section-head">
+        <span class="section-tag"><i class="fas fa-heart"></i> About Us</span>
+        <h2 class="section-title">Why <span class="gradient-text">HomeEase?</span></h2>
+      </div>
+      <div class="about-grid">
+        <div class="glass-card about-card">
+          <div class="about-icon"><i class="fas fa-shield-alt"></i></div>
+          <h3>Verified Professionals</h3>
+          <p>Every technician is background-verified and ID-checked before joining our platform.</p>
+        </div>
+        <div class="glass-card about-card">
+          <div class="about-icon"><i class="fas fa-clock"></i></div>
+          <h3>Same-Day Service</h3>
+          <p>Book before 12 PM and get same-day service from our on-call experts.</p>
+        </div>
+        <div class="glass-card about-card">
+          <div class="about-icon"><i class="fas fa-star"></i></div>
+          <h3>Transparent Ratings</h3>
+          <p>Real customer reviews and ratings help you pick the perfect pro for your home.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT SECTION -->
+    <section id="contact" class="section">
+      <div class="section-head">
+        <span class="section-tag"><i class="fas fa-envelope"></i> Contact Us</span>
+        <h2 class="section-title">We're Here to <span class="gradient-text">Help</span></h2>
+      </div>
+      <div class="contact-grid">
+        <div class="glass-card contact-card">
+          <div class="contact-icon"><i class="fas fa-phone-alt"></i></div>
+          <h3>Call Us</h3>
+          <p>+91 9894960598</p>
+          <p>Mon–Sun, 7 AM – 10 PM</p>
+        </div>
+        <div class="glass-card contact-card">
+          <div class="contact-icon"><i class="fas fa-envelope-open-text"></i></div>
+          <h3>Email Us</h3>
+          <p>zamirulrasmi03@gmail.com</p>
+          <p>Replies within 2 hours</p>
+        </div>
+        <div class="glass-card contact-card">
+          <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
+          <h3>Visit Us</h3>
+          <p>40 Ayyappa chetti Street Mannadi Chennai-600001</p>
+          <p>Metro City and Nearby Alreef Restarent</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- BOOKING MODAL -->
+  <div class="modal" id="bookingModal">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content glass-card modal-booking">
+      <button class="modal-close" data-close="bookingModal"><i class="fas fa-times"></i></button>
+
+      <div id="bookingFormWrap">
+        <div class="booking-head">
+          <div class="booking-head-icon"><i class="fas fa-calendar-check"></i></div>
+          <div>
+            <h3 class="modal-title">Book Now</h3>
+            <p class="booking-sub">Schedule your service in under a minute</p>
+          </div>
+        </div>
+        <form id="bookingForm" novalidate>
+          <div class="booking-grid">
+            <div class="booking-fields">
+              <div class="form-group">
+                <label><i class="fas fa-tools"></i> Service</label>
+                <select id="bookService" name="service_id" class="select-input" required>
+                  <option value="">Select a service...</option>
+                </select>
+              </div>
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label><i class="fas fa-calendar"></i> Date</label>
+                  <input type="date" class="text-input" id="bookDate" name="booking_date" required>
+                </div>
+                <div class="form-group">
+                  <label><i class="fas fa-clock"></i> Time Slot</label>
+                  <select class="select-input" id="bookTime" name="booking_time" required>
+                    <option value="">Select a time slot...</option>
+                    <option>08:00 AM</option>
+                    <option>10:00 AM</option>
+                    <option>12:00 PM</option>
+                    <option>02:00 PM</option>
+                    <option>04:00 PM</option>
+                    <option>06:00 PM</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label><i class="fas fa-user"></i> Full Name</label>
+                  <input type="text" class="text-input" id="bookName" name="customer_name" placeholder="Your name" required>
+                </div>
+                <div class="form-group">
+                  <label><i class="fas fa-envelope"></i> Email</label>
+                  <input type="email" class="text-input" id="bookEmail" name="customer_email" placeholder="you@example.com" required>
+                </div>
+              </div>
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label><i class="fas fa-phone-alt"></i> Phone</label>
+                  <input type="tel" class="text-input" id="bookPhone" name="customer_phone" placeholder="+91 00000 00000" required>
+                </div>
+                <div class="form-group">
+                  <label><i class="fas fa-map-marker-alt"></i> Service Address</label>
+                  <input type="text" class="text-input" id="bookAddress" name="address" placeholder="House / flat no., street, city" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <label><i class="fas fa-sticky-note"></i> Notes <span class="opt-label">(optional)</span></label>
+                <textarea class="text-input" id="bookNotes" name="notes" rows="2" placeholder="Any special instructions"></textarea>
+              </div>
+            </div>
+            <div class="booking-summary-col">
+              <div class="booking-summary">
+                <h4><i class="fas fa-receipt"></i> Order Summary</h4>
+                <div class="summary-rows">
+                  <div class="summary-row"><span>Service</span><span id="summaryServiceValue">—</span></div>
+                  <div class="summary-row"><span>Date</span><span id="summaryDate">—</span></div>
+                  <div class="summary-row"><span>Time</span><span id="summaryTime">—</span></div>
+                  <div class="summary-row total"><span>Total</span><span id="summaryTotal">₹0</span></div>
+                </div>
+                <p class="summary-note" id="summaryWorker"></p>
+                  <p class="visiting-fee-note" id="visitingFeeNote"><i class="fas fa-clipboard-check"></i> Visiting &amp; Inspection Fee: ₹199. Final repair cost will be quoted on-site after inspection.</p>
+              </div>
+              <p class="booking-secure"><i class="fas fa-shield-alt"></i> Instant confirmation — no advance payment required.</p>
+            </div>
+          </div>
+
+          <div class="upi-card" id="upi-checkout">
+            <div class="payment-methods" id="paymentMethods" role="radiogroup" aria-label="Payment method">
+              <label class="pay-option">
+                <input type="radio" name="payment-method" value="upi" checked>
+                <span class="pay-option-box">
+                  <i class="fas fa-qrcode"></i>
+                  <span><b>Online Payment (UPI)</b><small>GPay · PhonePe · Paytm</small></span>
+                </span>
+              </label>
+              <label class="pay-option">
+                <input type="radio" name="payment-method" value="cash">
+                <span class="pay-option-box">
+                  <i class="fas fa-hand-holding-usd"></i>
+                  <span><b>Hand Cash / Cash on Delivery</b><small>Pay when the pro arrives</small></span>
+                </span>
+              </label>
+            </div>
+            <div class="upi-head">
+              <span class="upi-title"><i class="fas fa-qrcode"></i> Scan &amp; Pay via UPI</span>
+              <span class="upi-badge"><i class="fas fa-hand-holding-usd"></i> 100% Free · Zero Commission</span>
+            </div>
+            <div class="upi-body">
+              <div class="upi-qr-wrap upi-online-only">
+                <img id="upi-qr-code" src="" alt="Scan &amp; Pay UPI QR" class="upi-qr">
+                <p class="upi-hint"><i class="fas fa-mobile-alt"></i> Scan with any UPI app</p>
+              </div>
+              <div class="upi-info">
+                <div class="upi-amount">
+                  <span class="upi-amount-label">Payable Amount</span>
+                  <span class="upi-amount-value">₹<span id="summary-total-price">0</span></span>
+                </div>
+                <a id="upi-intent-btn" href="#" class="btn-primary upi-intent-btn upi-online-only"><i class="fas fa-rocket"></i> Pay Now</a>
+                <div class="upi-utr-block upi-online-only">
+                  <label class="upi-utr-label" for="upi-utr-number"><i class="fas fa-receipt"></i> UPI Ref / UTR Number *</label>
+                  <input type="text" id="upi-utr-number" name="upi_utr" class="text-input" placeholder="Enter 12-Digit UPI Ref / UTR Number" maxlength="12" inputmode="numeric" autocomplete="off">
+                  <p class="upi-utr-hint">Enter the 12-digit UPI Transaction Reference shown after payment. Our team verifies it within minutes.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p class="booking-status hidden" id="bookingStatus" role="status" aria-live="polite"></p>
+
+          <button type="submit" class="btn btn-primary btn-full confirm-booking-btn" id="confirm-booking-btn"><i class="fas fa-calendar-check"></i> Confirm Booking</button>
+        </form>
+      </div>
+
+      <div id="bookingSuccess" class="booking-success hidden">
+        <div class="success-check"><i class="fas fa-check"></i></div>
+        <h3>Booking Confirmed!</h3>
+        <p id="successMsg">Your booking is placed.</p>
+        <div class="success-ref" id="successRef">REF: HOME-0000</div>
+        <p class="success-note"><i class="fas fa-envelope"></i> A notification has been sent to our team.</p>
+        <button class="btn btn-primary btn-full" id="bookingSuccessDone"><i class="fas fa-check"></i> Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- UPI APP SELECTION MODAL -->
+  <div class="modal" id="upiAppModal">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content glass-card modal-app-picker">
+      <button class="modal-close" data-close="upiAppModal"><i class="fas fa-times"></i></button>
+      <div class="app-picker">
+        <div class="app-picker-head">
+          <div class="app-picker-icon"><i class="fas fa-mobile-alt"></i></div>
+          <h3 class="modal-title">Choose Your UPI App</h3>
+          <p class="app-picker-sub">Pay <strong>₹<span id="app-picker-amount">0</span></strong> securely &amp; instantly — zero commission.</p>
+        </div>
+        <div class="app-picker-grid">
+          <button type="button" class="app-btn" id="app-gpay">
+            <span class="app-logo gpay">G</span>
+            <span class="app-name">Google Pay</span>
+          </button>
+          <button type="button" class="app-btn" id="app-phonepe">
+            <span class="app-logo phonepe">Pe</span>
+            <span class="app-name">PhonePe</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WORKER DETAILS MODAL -->
+  <div class="modal" id="workerModal">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content glass-card modal-wide">
+      <button class="modal-close" data-close="workerModal"><i class="fas fa-times"></i></button>
+      <div class="worker-detail" id="workerDetail"></div>
+      <div class="review-section">
+        <h4><i class="fas fa-comments"></i> Customer Reviews</h4>
+        <div class="review-list" id="reviewList"></div>
+        <form id="reviewForm" class="review-form">
+          <h5>Leave a Review</h5>
+          <div class="star-input" id="starInput">
+            <i class="far fa-star star" data-val="1"></i>
+            <i class="far fa-star star" data-val="2"></i>
+            <i class="far fa-star star" data-val="3"></i>
+            <i class="far fa-star star" data-val="4"></i>
+            <i class="far fa-star star" data-val="5"></i>
+          </div>
+          <input type="hidden" id="reviewRating" value="0">
+          <div class="form-group">
+            <input type="text" class="text-input" id="reviewName" placeholder="Your name" required>
+          </div>
+          <div class="form-group">
+            <textarea class="text-input" id="reviewComment" placeholder="Share your experience..." rows="3"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full"><i class="fas fa-paper-plane"></i> Submit Review</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ID CARD MODAL -->
+  <div class="modal" id="idCardModal">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content modal-idcard">
+      <button class="modal-close" data-close="idCardModal"><i class="fas fa-times"></i></button>
+      <div id="idCardContent"></div>
+    </div>
+  </div>
+
+  <!-- BOOKING SUCCESS TOAST -->
+  <div class="toast" id="toast">
+    <div class="toast-icon"><i class="fas fa-check-circle"></i></div>
+    <div class="toast-text" id="toastText">Booking confirmed!</div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="brand-logo"><i class="fas fa-hand-sparkles"></i></div>
+        <span>HomeEase</span>
+      </div>
+      <p>© 2026 HomeEase. All rights reserved. Your home, our care.</p>
+      <div class="footer-social">
+        <a href="#"><i class="fab fa-facebook-f"></i></a>
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-instagram"></i></a>
+        <a href="#"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js?v=booking-4"></script>
+</body>
+</html>
