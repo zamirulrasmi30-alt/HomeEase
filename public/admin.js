@@ -168,11 +168,13 @@
   }
 
   function bookingName(b) {
-    return (b && (b.user_name || b.customer_name || b.name)) ? esc(b.user_name || b.customer_name || b.name) : "—";
+    const name = b && (b.user_name || b.customer_name || b.customerName || b.name || b.customer);
+    return name ? esc(name) : "Guest User";
   }
 
   function bookingPhone(b) {
-    return (b && (b.user_phone || b.customer_phone)) ? esc(b.user_phone || b.customer_phone) : "—";
+    const phone = b && (b.user_phone || b.customer_phone || b.customerPhone || b.phone);
+    return phone ? esc(phone) : "—";
   }
 
   function bookingService(b) {
@@ -1058,8 +1060,8 @@
       $("#bkId").value = booking.id;
       $("#bkService").value = booking.service_id || "";
       $("#bkWorker").value = booking.worker_id || "";
-      $("#bkName").value = booking.user_name;
-      $("#bkPhone").value = booking.user_phone || "";
+      $("#bkName").value = booking.user_name || booking.customer_name || booking.customerName || booking.name || booking.customer || "";
+      $("#bkPhone").value = booking.user_phone || booking.customer_phone || booking.customerPhone || booking.phone || "";
       $("#bkEmail").value = booking.customer_email || "";
       $("#bkAddress").value = booking.address || "";
       $("#bkDate").value = booking.booking_date;

@@ -90,8 +90,12 @@ function routePost(action, b) {
       refreshWorkerRating(b.worker_id);
       return review;
     }
-    case 'createBooking': return insertRow('Bookings', coerceBooking(pick(b, SHEETS.Bookings, { id: uuid(), created_at: now(), status: 'pending' })));
-    case 'updateBooking': return updateRow('Bookings', b.id, pick(b, SHEETS.Bookings));
+    case 'createBooking': {
+      // Normalize aliases BEFORE pick(), which drops non-schema keys.
+      const normalized = coerceBooking(normalizeBooking(b));
+      return insertRow('Bookings', pick(normalized, SHEETS.Bookings, { id: uuid(), created_at: now(), status: 'pending' }));
+    }
+    case 'updateBooking': return updateRow('Bookings', b.id, pick(normalizeBooking(b), SHEETS.Bookings));
     case 'deleteBooking': {
       deleteRow('Bookings', b.id);
       return { message: 'Booking deleted' };
@@ -212,10 +216,21 @@ function coerceWorker(w) {
   return w;
 }
 
+// Map alternate frontend field names onto the canonical Bookings columns.
+// Must run BEFORE pick(), which drops keys outside the sheet schema.
+function normalizeBooking(b) {
+  const out = { ...(b || {}) };
+  if (!out.user_name) out.user_name = out.customer_name || out.customerName || out.name || out.customer || '';
+  if (!out.user_phone) out.user_phone = out.customer_phone || out.customerPhone || out.phone || '';
+  if (!out.worker_name) out.worker_name = out.labor_name || '';
+  if (!out.labor_name) out.labor_name = out.worker_name || '';
+  return out;
+}
+
 function coerceBooking(b) {
   // Accept legacy/alternate frontend field names (mirrors old server.js).
-  if (!b.user_name) b.user_name = b.customer_name || b.name || '';
-  if (!b.user_phone) b.user_phone = b.customer_phone || '';
+  if (!b.user_name) b.user_name = b.customer_name || b.customerName || b.name || b.customer || '';
+  if (!b.user_phone) b.user_phone = b.customer_phone || b.customerPhone || b.phone || '';
   if (!b.worker_name) b.worker_name = b.labor_name || '';
   if (!b.labor_name) b.labor_name = b.worker_name || '';
   if (b.amount !== undefined && b.amount !== '') b.amount = Number(b.amount) || 0;
