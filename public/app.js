@@ -743,6 +743,39 @@
       navigateTo(nav);
     });
 
+    // Click/tap toggle for the Services dropdown — :hover doesn't exist on
+    // touch devices, so without this the menu never opens on mobile/tablet.
+    // First tap opens the menu, second tap follows through to #services.
+    const servicesToggle = document.querySelector('.nav-dropdown-wrap > [data-nav="services"]');
+    const dropdownWrap = servicesToggle ? servicesToggle.closest(".nav-dropdown-wrap") : null;
+    const closeServicesDropdown = () => {
+      if (!dropdownWrap) return;
+      dropdownWrap.classList.remove("open");
+      if (servicesToggle) servicesToggle.setAttribute("aria-expanded", "false");
+    };
+    if (servicesToggle && dropdownWrap) {
+      servicesToggle.addEventListener("click", (e) => {
+        if (!dropdownWrap.classList.contains("open")) {
+          e.preventDefault();
+          e.stopPropagation(); // keep the delegated nav handler from navigating
+          dropdownWrap.classList.add("open");
+          servicesToggle.setAttribute("aria-expanded", "true");
+        } else {
+          closeServicesDropdown();
+          // fall through to the delegated handler below → navigates to #services
+        }
+      });
+      document.addEventListener("click", (e) => {
+        if (!dropdownWrap.classList.contains("open")) return;
+        if (!e.target.closest(".nav-dropdown-wrap") || e.target.closest(".nav-dropdown a")) {
+          closeServicesDropdown();
+        }
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeServicesDropdown();
+      });
+    }
+
     $("#bookNowBtn").addEventListener("click", () => openBookingModal());
     $("#heroBookBtn").addEventListener("click", () => openBookingModal());
     $("#heroExploreBtn").addEventListener("click", () => {
@@ -877,6 +910,9 @@
         grid.appendChild(card);
       });
     } catch (err) {
+      // Still populate the navbar dropdown from any cached services so nav
+      // keeps working even when the grid render fails.
+      try { renderCategoryNav(); } catch (e) { /* ignore */ }
       grid.innerHTML = `<div class="error-msg"><i class="fas fa-exclamation-triangle"></i> ${esc(err.message)}<br><button class="btn btn-primary btn-sm" onclick="location.reload()">Retry</button></div>`;
     }
   }

@@ -317,10 +317,14 @@ body {
 }
 .nav-dropdown-wrap:hover .nav-dropdown,
 .nav-dropdown-wrap:focus-within .nav-dropdown,
+.nav-dropdown-wrap.open .nav-dropdown,
 .nav-dropdown:hover {
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
+}
+.nav-dropdown-wrap.open .nav-caret {
+  transform: rotate(180deg);
 }
 .nav-dropdown a {
   display: flex;
