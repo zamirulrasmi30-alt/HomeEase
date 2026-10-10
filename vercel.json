@@ -11,17 +11,17 @@
     }
   ],
   "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/server.js"
-    },
-    {
-      "source": "/admin",
-      "destination": "/public/admin.html"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/public/$1"
-    }
-  ]
+  {
+    "source": "/api/(.*)",
+    "destination": "/server.js"
+  },
+  {
+    "source": "/admin",
+    "destination": "/public/admin.html"
+  },
+  {
+    "source": "/((?!api/).*)",
+    "destination": "/public/$1"
+  }
+]
 }
