@@ -8,6 +8,14 @@
     bookings: "/api/bookings",
   };
 
+  // ── Google Apps Script backend (Google Sheets as DB) ──
+  // Set the URL in public/config.js (window.SCRIPT_URL). All data calls
+  // below route through window.GAS (public/gas-api.js). No UI code changed.
+  async function gasFetch(path, options) {
+    if (!window.GAS) throw new Error("gas-api.js not loaded");
+    return window.GAS.api(path, options);
+  }
+
   // Replace with your key from https://web3forms.com after signing up.
   const WEB3FORMS_ACCESS_KEY = "1c53e5db-669b-42a6-ab83-7a092e5c3f01";
 
@@ -672,9 +680,7 @@
 
   async function refreshAdminBadge() {
     try {
-      const res = await fetch(API.bookings + "?status=pending");
-      if (!res.ok) return;
-      const pending = await res.json();
+      const pending = await gasFetch(API.bookings + "?status=pending");
       const pendingCount = Array.isArray(pending) ? pending.length : 0;
       const seen = readLocalInt(SEEN_KEY, 0);
       updateAdminBadge(pendingCount - seen);
@@ -787,25 +793,23 @@
 
   // ── Data Loading ──
   async function fetchServices() {
-    const res = await fetch(API.services);
-    if (!res.ok) throw new Error("Failed to fetch services");
-    state.services = await res.json();
+    state.services = await gasFetch(API.services);
     return state.services;
   }
 
   async function fetchWorkers(serviceId) {
     let url = API.workers;
     if (serviceId) url += "?service_id=" + encodeURIComponent(serviceId);
-    const res = await fetch(url);
-    if (!res.ok) throw new Error("Failed to fetch workers");
-    return res.json();
+    return gasFetch(url);
   }
 
   async function fetchReviewCount(workerId) {
-    const res = await fetch(API.reviews + "/" + workerId);
-    if (!res.ok) return 0;
-    const reviews = await res.json();
-    return Array.isArray(reviews) ? reviews.length : 0;
+    try {
+      const reviews = await gasFetch(API.reviews + "/" + workerId);
+      return Array.isArray(reviews) ? reviews.length : 0;
+    } catch (e) {
+      return 0;
+    }
   }
 
   // ── Category Nav (dedicated view router links) ──
@@ -881,7 +885,7 @@
   async function openCategoryPage(category, skipScroll) {
     try {
       const service = await (category
-        ? fetch(API.services + "/" + encodeURIComponent(category)).then((r) => (r.ok ? r.json() : null))
+        ? gasFetch(API.services + "/" + encodeURIComponent(category)).catch(() => null)
         : Promise.resolve(null));
       if (!service) throw new Error("Service not found");
       state.currentCategory = category;
@@ -1099,8 +1103,7 @@
     const list = $("#reviewList");
     list.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i></div>';
     try {
-      const res = await fetch(API.reviews + "/" + workerId);
-      const reviews = await res.json();
+      const reviews = await gasFetch(API.reviews + "/" + workerId);
       list.innerHTML = "";
       if (!Array.isArray(reviews) || !reviews.length) {
         list.innerHTML = `<p style="color:var(--text-dim);font-size:13px;text-align:center;">No reviews yet. Be the first to review!</p>`;
@@ -1388,13 +1391,15 @@
   }
 
   async function saveBooking(payload) {
-    const res = await fetch(API.bookings, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-    if (!res.ok) throw new Error("Failed to save booking. Please try again.");
-    return res.json();
+    try {
+      return await gasFetch(API.bookings, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+    } catch (e) {
+      throw new Error("Failed to save booking. Please try again.");
+    }
   }
 
   function dispatchWeb3Forms(payload) {
@@ -1741,19 +1746,18 @@
         return;
       }
       try {
-        const res = await fetch(API.reviews, {
+        await gasFetch(API.reviews, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ worker_id: state.currentWorker.id, user_name: userName, rating, comment }),
         });
-        if (!res.ok) throw new Error("Failed to submit review");
         showToast("Thanks for your review!", "fa-star");
         e.target.reset();
         $("#reviewRating").value = 0;
         $$("#starInput .star").forEach((s) => s.classList.remove("active"));
         loadReviews(state.currentWorker.id);
         // Refresh worker rating display
-        openWorkerModal(await (await fetch(API.workers + "/" + state.currentWorker.id)).json());
+        openWorkerModal(await gasFetch(API.workers + "/" + state.currentWorker.id));
         renderWorkers(state.currentWorkers);
       } catch (err) {
         showToast(err.message, "fa-exclamation-circle");

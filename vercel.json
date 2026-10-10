@@ -1,27 +1,37 @@
 {
-  "version": 2,
-  "builds": [
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
     {
-      "src": "server.js",
-      "use": "@vercel/node"
+      "source": "/admin",
+      "destination": "/public/admin.html"
     },
     {
-      "src": "public/**",
-      "use": "@vercel/static"
+      "source": "/admin.html",
+      "destination": "/public/admin.html"
+    },
+    {
+      "source": "/config.js",
+      "destination": "/public/config.js"
+    },
+    {
+      "source": "/gas-api.js",
+      "destination": "/public/gas-api.js"
+    },
+    {
+      "source": "/app.js",
+      "destination": "/public/app.js"
+    },
+    {
+      "source": "/admin.js",
+      "destination": "/public/admin.js"
+    },
+    {
+      "source": "/style.css",
+      "destination": "/public/style.css"
+    },
+    {
+      "source": "/((?!api/).*)",
+      "destination": "/public/$1"
     }
-  ],
-  "rewrites": [
-  {
-    "source": "/api/(.*)",
-    "destination": "/server.js"
-  },
-  {
-    "source": "/admin",
-    "destination": "/public/admin.html"
-  },
-  {
-    "source": "/((?!api/).*)",
-    "destination": "/public/$1"
-  }
-]
+  ]
 }

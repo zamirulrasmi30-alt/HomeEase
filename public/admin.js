@@ -48,14 +48,24 @@
     };
   }
 
+  // ── Google Apps Script backend (Google Sheets as DB) ──
+  // Set the URL in public/config.js (window.SCRIPT_URL). All api() calls
+  // below route through window.GAS (public/gas-api.js). No UI code changed.
   async function api(path, options) {
-    const res = await fetch(path, options);
-    if (!res.ok) {
-      let msg = "Request failed";
-      try { msg = (await res.json()).error || msg; } catch (e) {}
-      throw new Error(msg);
+    if (!window.GAS) throw new Error("gas-api.js not loaded");
+    try {
+      return await window.GAS.api(path, options);
+    } catch (e) {
+      throw new Error((e && e.message) || "Request failed");
     }
-    return res.json();
+  }
+
+  // Read a File input as a base64 data-URL (Sheets can't receive multipart
+  // uploads, so photos/ID cards are stored as data-URLs or https URLs).
+  function readFileAsDataUrl(file) {
+    return window.GAS
+      ? window.GAS.fileToDataUrl(file)
+      : Promise.reject(new Error("gas-api.js not loaded"));
   }
 
   function openModal(id) {
@@ -790,28 +800,34 @@
         $("#workerService").focus();
         return;
       }
-      const formData = new FormData();
-      formData.append("service_id", serviceId);
-      formData.append("name", $("#workerName").value.trim());
-      formData.append("phone", $("#workerPhone").value.trim());
-      formData.append("experience", parseInt($("#workerExp").value, 10) || 0);
-      formData.append("rating", parseFloat($("#workerRating").value) || 0);
-      formData.append("hourly_rate", parseFloat($("#workerRate").value) || 0);
-      formData.append("skill", $("#workerSkill").value.trim());
-      formData.append("skill_level", $("#workerSkillLevel").value);
-      formData.append("status", $("#workerStatus").value);
-      if (photoInput.files[0]) {
-        formData.append("photo", photoInput.files[0]);
-      } else if ($("#workerPhotoUrl").value.trim()) {
-        formData.append("photo_url", $("#workerPhotoUrl").value.trim());
-      }
-      if (idInput.files[0]) formData.append("id_card", idInput.files[0]);
+      // Sheets backend: no multipart uploads — send JSON with photo/id-card
+      // as https URL (preferred) or base64 data-URL (small images only).
+      const payload = {
+        service_id: serviceId,
+        name: $("#workerName").value.trim(),
+        phone: $("#workerPhone").value.trim(),
+        experience: parseInt($("#workerExp").value, 10) || 0,
+        rating: parseFloat($("#workerRating").value) || 0,
+        hourly_rate: parseFloat($("#workerRate").value) || 0,
+        skill: $("#workerSkill").value.trim(),
+        skill_level: $("#workerSkillLevel").value,
+        status: $("#workerStatus").value,
+        photo_url: $("#workerPhotoUrl").value.trim(),
+        id_card_url: "",
+      };
       try {
+        if (photoInput.files[0]) payload.photo_url = await readFileAsDataUrl(photoInput.files[0]);
+        const existing = id ? adminState.workers.find((x) => x.id === id) : null;
+        if (idInput.files[0]) {
+          payload.id_card_url = await readFileAsDataUrl(idInput.files[0]);
+        } else if (existing) {
+          payload.id_card_url = existing.id_card_url || "";
+        }
         if (id) {
-          await fetch("/api/workers/" + id, { method: "PUT", body: formData });
+          await api("/api/workers/" + id, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
           showToast("Worker updated!", "fa-sync-alt");
         } else {
-          await fetch("/api/workers", { method: "POST", body: formData });
+          await api("/api/workers", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
           showToast("Worker added!", "fa-user-plus");
         }
         adminState.editingWorker = null;
