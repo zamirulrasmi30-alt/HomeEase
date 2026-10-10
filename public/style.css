@@ -2879,6 +2879,34 @@ body.admin-mode .mobile-menu {
   .booking-status { font-size: 12.5px; }
 }
 
+/* ── Booking modal: phones / narrow tablets (desktop untouched) ── */
+@media (max-width: 768px) {
+  .modal { padding: 12px; }
+  .modal-booking { max-width: 95vw; max-height: 90vh; overflow-y: auto; }
+  .modal-content { max-height: 90vh; overflow-y: auto; }
+  .booking-head { padding: 20px 20px 16px; }
+  #bookingForm { padding: 20px 20px 24px; }
+  /* Stack form fields above the Order Summary / Payment column */
+  .booking-grid { grid-template-columns: 1fr; }
+  .booking-summary-col { position: static; }
+  .summary-row > * { min-width: 0; overflow-wrap: anywhere; }
+  /* Full-width controls, no horizontal clipping */
+  #bookingForm .text-input,
+  #bookingForm .select-input,
+  #bookingForm textarea,
+  #bookingForm .btn { width: 100%; max-width: 100%; }
+  /* Payment section stacks; QR scales fluidly */
+  .upi-body { flex-direction: column; align-items: stretch; }
+  .upi-qr-wrap { width: 100%; }
+  .upi-qr {
+    width: min(200px, 100%);
+    height: auto;
+    max-width: 100%;
+    aspect-ratio: 1 / 1;
+  }
+  .upi-info { min-width: 0; flex-basis: auto; width: 100%; }
+}
+
 /* Respect reduced-motion: keep feedback, drop the travel */
 @media (prefers-reduced-motion: reduce) {
   .btn, .btn::after, .toast, .modal-content, .modal-backdrop,
