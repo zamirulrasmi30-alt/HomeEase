@@ -737,7 +737,7 @@
       mobileMenu.classList.remove("open");
       const nav = link.dataset.nav;
       if (nav === "admin") {
-        window.location.href = "/admin";
+        window.location.href = "admin.html";
         return;
       }
       navigateTo(nav);
