@@ -29,11 +29,17 @@ function setup() {
 /* ---------------- HTTP entry points ---------------- */
 
 function doGet(e) {
+  const p = (e && e.parameter) || {};
   try {
-    const p = (e && e.parameter) || {};
-    return json({ success: true, data: routeGet(String(p.action || ''), p) });
+    const out = { success: true, data: routeGet(String(p.action || ''), p) };
+    // JSONP fallback for browsers where fetch() is blocked (CORS/extensions).
+    // The static frontend (public/gas-api.js) appends ?callback= automatically.
+    if (p.callback) return jsonp(String(p.callback), out);
+    return json(out);
   } catch (err) {
-    return json({ success: false, error: String((err && err.message) || err) });
+    const out = { success: false, error: String((err && err.message) || err) };
+    if (p.callback) return jsonp(String(p.callback), out);
+    return json(out);
   }
 }
 
@@ -239,6 +245,12 @@ function now() {
 
 function json(obj) {
   return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
+}
+
+function jsonp(callback, obj) {
+  const safe = String(callback).replace(/[^A-Za-z0-9_$]/g, '').slice(0, 64) || 'callback';
+  return ContentService.createTextOutput(safe + '(' + JSON.stringify(obj) + ');')
+    .setMimeType(ContentService.MimeType.JAVASCRIPT);
 }
 
 /* ---------------- Seed data (mirrors previous defaults) ---------------- */

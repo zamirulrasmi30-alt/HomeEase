@@ -22,28 +22,105 @@
     return json;
   }
 
-  async function gasGet(action, params) {
-    const base = getScriptUrl();
-    if (!base) throw new Error("SCRIPT_URL is not configured. See public/config.js.");
+  function isNetworkError(err) {
+    // Browser fetch() surfaces network/CORS/DNS failures as TypeError.
+    return err instanceof TypeError;
+  }
+
+  function networkError() {
+    return new Error(
+      "Cannot reach the booking backend. Check: (1) the Web App is deployed with " +
+      "'Who has access: Anyone', (2) it was redeployed as a New version after the " +
+      "latest Code.gs change, (3) window.SCRIPT_URL in public/config.js matches the " +
+      "current /exec URL, (4) no ad-blocker is blocking script.google.com."
+    );
+  }
+
+  function buildQuery(action, params) {
     const qs = new URLSearchParams({ action });
     for (const [k, v] of Object.entries(params || {})) {
       if (v !== undefined && v !== null && v !== "") qs.append(k, String(v));
     }
-    const res = await fetch(base + "?" + qs.toString(), { method: "GET", redirect: "follow" });
-    if (!res.ok) throw new Error("Request failed (" + res.status + ")");
-    return unwrap(await res.json());
+    return qs.toString();
+  }
+
+  // JSONP fallback for GETs: a <script> tag is not subject to CORS, so reads
+  // still work when fetch() is blocked (privacy extensions, proxies, etc.).
+  // Requires gas/Code.gs doGet() callback support (already included).
+  function gasJsonp(action, params) {
+    return new Promise((resolve, reject) => {
+      const base = getScriptUrl();
+      if (!base || typeof document === "undefined") {
+        reject(networkError());
+        return;
+      }
+      const cb = "__gas_cb_" + Date.now() + "_" + Math.floor(Math.random() * 1e6);
+      const script = document.createElement("script");
+      const timer = setTimeout(() => {
+        cleanup();
+        reject(networkError());
+      }, 20000);
+      const cleanup = () => {
+        try { delete window[cb]; } catch (e) { window[cb] = undefined; }
+        clearTimeout(timer);
+        if (script.parentNode) script.parentNode.removeChild(script);
+      };
+      window[cb] = (json) => {
+        cleanup();
+        try {
+          resolve(unwrap(json));
+        } catch (e) {
+          reject(e);
+        }
+      };
+      script.onerror = () => {
+        cleanup();
+        reject(networkError());
+      };
+      script.src = base + "?" + buildQuery(action, { ...(params || {}), callback: cb });
+      document.head.appendChild(script);
+    });
+  }
+
+  async function gasGet(action, params) {
+    const base = getScriptUrl();
+    if (!base) throw new Error("SCRIPT_URL is not configured. See public/config.js.");
+    try {
+      const res = await fetch(base + "?" + buildQuery(action, params), {
+        method: "GET",
+        mode: "cors",
+        credentials: "omit",
+        cache: "no-store",
+        redirect: "follow",
+      });
+      if (!res.ok) throw new Error("Request failed (" + res.status + ")");
+      return unwrap(await res.json());
+    } catch (err) {
+      if (isNetworkError(err)) return gasJsonp(action, params);
+      throw err;
+    }
   }
 
   async function gasPost(action, payload) {
     const base = getScriptUrl();
     if (!base) throw new Error("SCRIPT_URL is not configured. See public/config.js.");
-    const res = await fetch(base, {
-      method: "POST",
-      // text/plain avoids the CORS preflight that GAS cannot answer.
-      headers: { "Content-Type": "text/plain;charset=utf-8" },
-      body: JSON.stringify({ action, ...(payload || {}) }),
-      redirect: "follow",
-    });
+    let res;
+    try {
+      res = await fetch(base, {
+        method: "POST",
+        mode: "cors",
+        credentials: "omit",
+        cache: "no-store",
+        // text/plain avoids the CORS preflight that GAS cannot answer.
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({ action, ...(payload || {}) }),
+        redirect: "follow",
+      });
+    } catch (err) {
+      // Writes can't fall back to JSONP (GET-only), so surface an actionable error.
+      // Note: app.js already persists bookings to localStorage before this call.
+      throw networkError();
+    }
     if (!res.ok) throw new Error("Request failed (" + res.status + ")");
     return unwrap(await res.json());
   }
